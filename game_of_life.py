@@ -1,5 +1,6 @@
-from graphics import *
 import random
+
+from graphics import *
 
 ## Written by Sarina Canelake & Kelly Casteel, August 2010
 ## Revised January 2011
@@ -13,14 +14,15 @@ BLOCK_OUTLINE_WIDTH = 2
 BOARD_WIDTH = 12
 BOARD_HEIGHT = 12
 
-neighbor_test_blocklist = [(0,0), (1,1)]
-toad_blocklist = [(4,4), (3,5), (3,6), (5,7), (6,5), (6,6)]
-beacon_blocklist = [(2,3), (2,4), (3,3), (3,4), (4,5), (4,6), (5,5), (5,6)]
-glider_blocklist = [(1,2), (2,3), (3,1), (3,2), (3,3)]
-pulsar_blocklist = [(2,4), (2,5), (2,6), (4,2), (4,7), (5,2), (5,7),
-                    (6,2), (6,7), (7,4), (7,5), (7,6), ]
+neighbor_test_blocklist = [(0, 0), (1, 1)]
+toad_blocklist = [(4, 4), (3, 5), (3, 6), (5, 7), (6, 5), (6, 6)]
+beacon_blocklist = [(2, 3), (2, 4), (3, 3), (3, 4), (4, 5), (4, 6), (5, 5), (5, 6)]
+glider_blocklist = [(1, 2), (2, 3), (3, 1), (3, 2), (3, 3)]
+pulsar_blocklist = [(2, 4), (2, 5), (2, 6), (4, 2), (4, 7), (5, 2), (5, 7),
+                    (6, 2), (6, 7), (7, 4), (7, 5), (7, 6), ]
 # for diehard, make board at least 25x25, might need to change block size
-diehard_blocklist = [(5,7), (6,7), (6,8), (10,8), (11,8), (12,8), (11,6)]
+diehard_blocklist = [(5, 7), (6, 7), (6, 8), (10, 8), (11, 8), (12, 8), (11, 6)]
+
 
 ############################################################
 # TEST CODE (don't worry about understanding this section)
@@ -33,39 +35,39 @@ def test_neighbors(board):
     for block in board.block_list.values():
         neighbors = board.get_block_neighbors(block)
         ncoords = [neighbor.get_coords() for neighbor in neighbors]
-        if block.get_coords() == (0,0):
-            zeroneighs = [(0,1), (1,1), (1,0)]
+        if block.get_coords() == (0, 0):
+            zeroneighs = [(0, 1), (1, 1), (1, 0)]
             for n in ncoords:
                 if n not in zeroneighs:
-                    print "Testing block at (0,0)"
-                    print "Got", ncoords
-                    print "Expected", zeroneighs
+                    print("Testing block at (0,0)")
+                    print("Got", ncoords)
+                    print("Expected", zeroneighs)
                     return False
 
             for neighbor in neighbors:
                 if neighbor.get_coords() == (1, 1):
                     if neighbor.is_live() == False:
-                        print "Testing block at (0, 0)..."
-                        print "My neighbor at (1, 1) should be live; it is not."
-                        print "Did you return my actual neighbors, or create new copies of them?"
-                        print "FAIL: get_block_neighbors() should NOT return new Blocks!"
+                        print("Testing block at (0, 0)...")
+                        print("My neighbor at (1, 1) should be live; it is not.")
+                        print("Did you return my actual neighbors, or create new copies of them?")
+                        print("FAIL: get_block_neighbors() should NOT return new Blocks!")
                         return False
 
-        elif block.get_coords() == (1,1):
-            oneneighs = [(0,0), (0,1), (0,2), (1,0), (1,2), (2,0), (2,1),(2,2)]
+        elif block.get_coords() == (1, 1):
+            oneneighs = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2)]
             for n in ncoords:
                 if n not in oneneighs:
-                    print "Testing block at (1,1)"
-                    print "Got", ncoords
-                    print "Expected", oneneighs
+                    print("Testing block at (1,1)")
+                    print("Got", ncoords)
+                    print("Expected", oneneighs)
                     return False
             for n in oneneighs:
                 if n not in ncoords:
-                    print "Testing block at (1,1)"
-                    print "Got", ncoords
-                    print "Expected", oneneighs
+                    print("Testing block at (1,1)")
+                    print("Got", ncoords)
+                    print("Expected", oneneighs)
                     return False
-    print "Passed neighbor test"
+    print("Passed neighbor test")
     return True
 
 
@@ -90,8 +92,8 @@ class Block(Rectangle):
         self.x = pos.x
         self.y = pos.y
 
-        p1 = Point(pos.x*BLOCK_SIZE,
-                   pos.y*BLOCK_SIZE)
+        p1 = Point(pos.x * BLOCK_SIZE,
+                   pos.y * BLOCK_SIZE)
         p2 = Point(p1.x + BLOCK_SIZE, p1.y + BLOCK_SIZE)
 
         Rectangle.__init__(self, p1, p2)
@@ -103,22 +105,22 @@ class Block(Rectangle):
     def get_coords(self):
         return (self.x, self.y)
 
-    def set_live(self, canvas):
+    def set_live(self, win):
         '''
         Sets the block status to 'live' and draws it on the grid.
         Be sure to do this on the canvas!
         '''
-        if self.status=='dead':
-          self.status = 'live'
-          self.draw(canvas)
+        if self.status == 'dead':
+            self.status = 'live'
+            self.draw(win)
 
     def set_dead(self):
         '''
         Sets the block status to 'dead' and undraws it from the grid.
         '''
-        if self.status=='live':
-          self.status = 'dead'
-          self.undraw()
+        if self.status == 'live':
+            self.status = 'dead'
+            self.undraw()
 
     def is_live(self):
         '''
@@ -128,19 +130,19 @@ class Block(Rectangle):
             return True
         return False
 
-    def reset_status(self, canvas):
+    def reset_status(self, win):
         '''
         Sets the new_status to be the current status
         '''
-        if self.new_status=='dead':
+        if self.new_status == 'dead':
             self.set_dead()
-        elif self.new_status=='live':
-            self.set_live(canvas)
+        elif self.new_status == 'live':
+            self.set_live(win)
 
 
 ###########################################################
 # BOARD CLASS (Read through and understand this part!)
-# Print out and turn in this section.
+# print(out and turn in this section.)
 # Name:
 # Recitation:
 ###########################################################
@@ -163,15 +165,15 @@ class Board(object):
         self.delay = 1000
 
         # create a canvas to draw the blocks on
-        self.canvas = CanvasFrame(win, self.width * BLOCK_SIZE,
-                                       self.height * BLOCK_SIZE)
-        self.canvas.setBackground('white')
+        # self.canvas = CanvasFrame(win, self.width * BLOCK_SIZE,
+        #                           self.height * BLOCK_SIZE)
+        win.setBackground('white')
 
         # initialize grid lines
-        for x in range(1,self.width):
+        for x in range(1, self.width):
             self.draw_gridline(Point(x, 0), Point(x, self.height))
 
-        for y in range(1,self.height):
+        for y in range(1, self.height):
             self.draw_gridline(Point(0, y), Point(self.width, y))
 
         # For each square on the board, we need to initialize
@@ -183,21 +185,19 @@ class Board(object):
         ####### YOUR CODE HERE ######
         raise Exception("__init__ not implemented")
 
-
     def draw_gridline(self, startp, endp):
         ''' Parameters: startp - a Point of where to start the gridline
                         endp - a Point of where to end the gridline
             Draws two straight 1 pixel lines next to each other, to create
             a nice looking grid on the canvas.
         '''
-        line = Line(Point(startp.x*BLOCK_SIZE, startp.y*BLOCK_SIZE), \
-                    Point(endp.x*BLOCK_SIZE, endp.y*BLOCK_SIZE))
-        line.draw(self.canvas)
+        line = Line(Point(startp.x * BLOCK_SIZE, startp.y * BLOCK_SIZE), \
+                    Point(endp.x * BLOCK_SIZE, endp.y * BLOCK_SIZE))
+        line.draw(self.win)
 
-        line = Line(Point(startp.x*BLOCK_SIZE-1, startp.y*BLOCK_SIZE-1), \
-                    Point(endp.x*BLOCK_SIZE-1, endp.y*BLOCK_SIZE-1))
-        line.draw(self.canvas)
-
+        line = Line(Point(startp.x * BLOCK_SIZE - 1, startp.y * BLOCK_SIZE - 1), \
+                    Point(endp.x * BLOCK_SIZE - 1, endp.y * BLOCK_SIZE - 1))
+        line.draw(self.win)
 
     def random_seed(self, percentage):
         ''' Parameters: percentage - a number between 0 and 1 representing the
@@ -207,7 +207,7 @@ class Board(object):
         '''
         for block in self.block_list.values():
             if random.random() < percentage:
-                block.set_live(self.canvas)
+                block.set_live(self.win)
 
     def seed(self, block_coords):
         '''
@@ -219,8 +219,6 @@ class Board(object):
         #### YOUR CODE HERE #####
         raise Exception("seed not implemented")
 
-
-
     def get_block_neighbors(self, block):
         '''
         Given a Block object, returns a list of neighboring blocks.
@@ -229,7 +227,6 @@ class Board(object):
         #### YOUR CODE HERE #####
         #### Think about edge conditions!
         raise Exception("get_block_neighbors not implemented")
-
 
     def simulate(self):
         '''
@@ -248,8 +245,6 @@ class Board(object):
         #### YOUR CODE HERE #####
         raise Exception("simulate not implemented")
 
-
-
     def animate(self):
         '''
         Animates the Game of Life, calling "simulate"
@@ -259,14 +254,13 @@ class Board(object):
         self.win.after(self.delay, self.animate)
 
 
-
 ################################################################
 # RUNNING THE SIMULATION
 ################################################################
 
 if __name__ == '__main__':
     # Initalize board
-    win = Window("Conway's Game of Life")
+    win = GraphWin("Conway's Game of Life")
     board = Board(win, BOARD_WIDTH, BOARD_HEIGHT)
 
     ## PART 1: Make sure that the board __init__ method works
@@ -280,7 +274,6 @@ if __name__ == '__main__':
     ## the following two lines:
     # board.seed(neighbor_test_blocklist)
     # test_neighbors(board)
-
 
     ## PART 4: Test that simulate() works by uncommenting the next two lines:
     # board.seed(toad_blocklist)
