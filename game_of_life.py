@@ -1,5 +1,7 @@
 import random
+from collections import namedtuple
 
+import self as self
 from graphics import *
 
 ## Written by Sarina Canelake & Kelly Casteel, August 2010
@@ -181,9 +183,11 @@ class Board(object):
         # dictionary (self.block_list) that has key:value pairs of
         # (x,y):Block will be useful here.
         self.block_list = {}
-
-        ####### YOUR CODE HERE ######
-        raise Exception("__init__ not implemented")
+        Position = namedtuple('Position', ['x', 'y'])
+        for x_block in range(BOARD_WIDTH):
+            for y_block in range(BOARD_HEIGHT):
+                key = Position(x_block, y_block)
+                self.block_list[key] = Block(key, 'blue')
 
     def draw_gridline(self, startp, endp):
         ''' Parameters: startp - a Point of where to start the gridline
@@ -215,18 +219,25 @@ class Board(object):
         Takes in a list of (x, y) tuples representing block coordinates,
         and activates the blocks corresponding to those coordinates.
         '''
-
-        #### YOUR CODE HERE #####
-        raise Exception("seed not implemented")
+        for pos in block_coords:
+            self.block_list[pos].set_live(self.win)
 
     def get_block_neighbors(self, block):
         '''
         Given a Block object, returns a list of neighboring blocks.
         Should not return itself in the list.
         '''
-        #### YOUR CODE HERE #####
+
         #### Think about edge conditions!
-        raise Exception("get_block_neighbors not implemented")
+        neighbors = []
+        for x in range(-1, 2):
+            if 0<=block.x + x<BOARD_WIDTH:
+                for y in range(-1, 2):
+                    if x==0 and y==0:
+                        continue
+                    if  0<=block.y + y<BOARD_HEIGHT:
+                        neighbors.append(self.block_list[(block.x + x, block.y + y)])
+        return neighbors
 
     def simulate(self):
         '''
@@ -242,9 +253,18 @@ class Board(object):
            to call reset_status(self.canvas) on each block.
         '''
 
-        #### YOUR CODE HERE #####
-        raise Exception("simulate not implemented")
-
+        for block in self.block_list.values():
+            neighbors= self.get_block_neighbors(block)
+            alive=0
+            for neighbor in neighbors:
+                if neighbor.is_live():
+                    alive+=1
+            if alive<2 or alive>3:
+                    block.new_status='dead'
+            elif alive==3:
+                    block.new_status='live'
+        for block in self.block_list.values():
+            block.reset_status(self.win)
     def animate(self):
         '''
         Animates the Game of Life, calling "simulate"
@@ -260,11 +280,11 @@ class Board(object):
 
 if __name__ == '__main__':
     # Initalize board
-    win = GraphWin("Conway's Game of Life")
+    win = GraphWin("Conway's Game of Life", BOARD_WIDTH*40, BOARD_HEIGHT*40)
     board = Board(win, BOARD_WIDTH, BOARD_HEIGHT)
 
     ## PART 1: Make sure that the board __init__ method works
-    board.random_seed(.15)
+    # board.random_seed(.15)
 
     ## PART 2: Make sure board.seed works. Comment random_seed above and uncomment
     ##  one of the seed methods below
@@ -276,12 +296,12 @@ if __name__ == '__main__':
     # test_neighbors(board)
 
     ## PART 4: Test that simulate() works by uncommenting the next two lines:
-    # board.seed(toad_blocklist)
-    # win.after(2000, board.simulate)
+    board.seed(glider_blocklist)
+    win.after(2000, board.simulate)
 
     ## PART 5: Try animating! Comment out win.after(2000, board.simulate) above, and
     ## uncomment win.after below.
-    # win.after(2000, board.animate)
+    win.after(2000, board.animate)
 
     ## Yay, you're done! Try seeding with different blocklists (a few are provided at the top of this file!)
 
