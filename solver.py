@@ -27,3 +27,4 @@ def word_finder(s):
             result.append(word)
     return result
 print(unique(word_finder('treat')))
+
